@@ -28,7 +28,7 @@ def main_loop(H, B, q, R_int, gamma, Su, base_, i):
     with open(input_file, 'w+') as fd:
         fd.write(file_lines)
 
-    command = ['optumg2cmd', input_file, f'/output:{output_file}', f'/log:{log_file}', '/echo']
+    command = ['optumg2cmd', input_file, f'/output:{output_file}', f'/log:{log_file}']
     p = subprocess.Popen(command, shell=True)
     p.wait()
 
@@ -64,5 +64,9 @@ if __name__ == '__main__':
         result = result.sort_index()
 
         result.to_csv(output_csv_file)
+        print(f"########### Combination No. {i} ###########")
+        print(f"B = {B}, H = {H}, q = {q}, R_int = {R_int}, Unit Weight = {gamma}, Su = {s_u}")
+        print(f"SF_L:{sf_l} & SF_U:{sf_u}")
+        print("_______________________________________________")
 
     print(result)
