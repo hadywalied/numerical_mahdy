@@ -5,6 +5,7 @@ import re
 import subprocess
 
 import pandas as pd
+from tqdm import tqdm
 
 
 def main_loop(H, B, q, R_int, gamma, Su, base_, i):
@@ -23,7 +24,6 @@ def main_loop(H, B, q, R_int, gamma, Su, base_, i):
         file_lines = file_lines.replace("$Rint$", str(R_int))
         file_lines = file_lines.replace("$gamma$", str(gamma))
         file_lines = file_lines.replace("$Su$", str(Su))
-
 
     with open(input_file, 'w+') as fd:
         fd.write(file_lines)
@@ -55,18 +55,22 @@ if __name__ == '__main__':
     possible_combinations = list(itertools.product(*p))
 
     result = pd.DataFrame(columns=['H', 'B', 'q', 'R_int', 'gamma', 'Su', 'sf_lower', 'sf_upper'])
-    for i, combination in enumerate(possible_combinations):
-        sf_l = main_loop(*combination, base_file_lower, i)
-        sf_u = main_loop(*combination, base_file_upper, i)
+    with tqdm(total=len(possible_combinations)) as bar:
+        for i, combination in enumerate(possible_combinations):
+            sf_l = main_loop(*combination, base_file_lower, i)
+            sf_u = main_loop(*combination, base_file_upper, i)
 
-        result.loc[-1] = [*combination, sf_l, sf_u]
-        result.index = result.index + 1
-        result = result.sort_index()
+            result.loc[-1] = [*combination, sf_l, sf_u]
+            result.index = result.index + 1
+            result = result.sort_index()
 
-        result.to_csv(output_csv_file)
-        print(f"########### Combination No. {i} ###########")
-        print(f"B = {B}, H = {H}, q = {q}, R_int = {R_int}, Unit Weight = {gamma}, Su = {s_u}")
-        print(f"SF_L:{sf_l} & SF_U:{sf_u}")
-        print("_______________________________________________")
+            result.to_csv(output_csv_file)
+            bar.update(1)
+            print(f"########### Combination No. {i} ###########")
+            print(
+                f"B = {combination[0]}, H = {combination[1]}, q = {combination[2]}, R_int = {combination[3]},"
+                f" Unit Weight = {combination[4]}, Su = {combination[5]}")
+            print(f"SF_L:{sf_l} & SF_U:{sf_u}")
+            print("_______________________________________________")
 
     print(result)
