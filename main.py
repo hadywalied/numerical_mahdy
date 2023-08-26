@@ -3,14 +3,14 @@ import subprocess
 
 if __name__ == '__main__':
     base_file = 'Slope_Base.g2x'
-    input_file = 'Slope_output.g2x'
+    input_file = 'Slope_inputput.g2x'
     output_file = 'Slope_output.g2x'
-    log_file = 'Slope_log.g2x'
+    log_file = 'Slope_log.txt'
     with open(base_file, 'r') as fd:
         file_lines = fd.read()
         file_lines = file_lines.replace("$X$", "10")
 
-    with open(input_file, 'w') as fd:
+    with open(input_file, 'w+') as fd:
         fd.write(file_lines)
 
     command = ['optumg2cmd', input_file, f'/output:{output_file}', f'/log:{log_file}', '/echo']
